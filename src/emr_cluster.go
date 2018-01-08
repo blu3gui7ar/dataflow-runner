@@ -298,10 +298,12 @@ func GetEbsConfiguration(c *EbsConfigurationRecord) *emr.EbsConfiguration {
 
 		for i, config := range configs {
 			emrVolumeSpec := emr.VolumeSpecification{
-				Iops:       aws.Int64(config.VolumeSpecification.Iops),
 				SizeInGB:   aws.Int64(config.VolumeSpecification.SizeInGB),
 				VolumeType: aws.String(config.VolumeSpecification.VolumeType),
 			}
+      if config.VolumeSpecification.Iops > 0 {
+        emrVolumeSpec.Iops = aws.Int64(config.VolumeSpecification.Iops)
+      }
 
 			emrConfig := emr.EbsBlockDeviceConfig{
 				VolumesPerInstance:  aws.Int64(config.VolumesPerInstance),

@@ -20,6 +20,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
+  "github.com/aws/aws-sdk-go/aws/ec2metadata"
+  "github.com/aws/aws-sdk-go/aws/session"
 )
 
 // GetCredentialsProvider attempts to fetch credentials from either:
@@ -28,7 +30,7 @@ import (
 // 3. Static Credentials
 func GetCredentialsProvider(a string, s string) (*credentials.Credentials, error) {
 	if isIam(a) && isIam(s) {
-		return credentials.NewCredentials(&ec2rolecreds.EC2RoleProvider{}), nil
+    return credentials.NewCredentials(&ec2rolecreds.EC2RoleProvider{Client: ec2metadata.New(session.New())}), nil
 	} else if isIam(a) || isIam(s) {
 		return nil, errors.New("access-key and secret-key must both be set to 'iam', or neither")
 	} else if isEnv(a) && isEnv(s) {
